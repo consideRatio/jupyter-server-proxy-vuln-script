@@ -1,4 +1,3 @@
-
 """
 This script is designed to check for and conditionally patch GHSA-w3vc-fx9p-wp4v
 in user servers started by a JupyterHub.
@@ -43,7 +42,7 @@ def get_version_specifier():
     """
     old = ["jupyter-server-proxy>=3.2.3,<4"]
     new = ["jupyter-server-proxy>=4.1.1,<5", "simpervisor>=1,<2"]
-    
+
     # Until we have released 3.2.3 and 4.1.1, this helps us test things
     if os.environ.get("TEST"):
         old = ["jupyter-server-proxy>=3.2.2,<4"]
@@ -86,7 +85,9 @@ def patch_vuln():
 
 def main():
     if check_vuln():
-        warning_or_error = "ERROR" if ERROR_IF_VULNERABLE and not UPGRADE_IF_VULNERABLE else "WARNING"
+        warning_or_error = (
+            "ERROR" if ERROR_IF_VULNERABLE and not UPGRADE_IF_VULNERABLE else "WARNING"
+        )
         print(
             f"{warning_or_error}: jupyter-server-proxy __is vulnerable__ to GHSA-w3vc-fx9p-wp4v, see "
             "https://github.com/jupyterhub/jupyter-server-proxy/security/advisories/GHSA-w3vc-fx9p-wp4v.",
@@ -94,7 +95,7 @@ def main():
         )
         if warning_or_error == "ERROR":
             sys.exit(1)
-        
+
         if UPGRADE_IF_VULNERABLE:
             print(
                 "INFO: Attempting to upgrade jupyter-server-proxy using pip...",
@@ -113,5 +114,6 @@ def main():
                 )
                 if warning_or_error == "ERROR":
                     sys.exit(1)
+
 
 main()
