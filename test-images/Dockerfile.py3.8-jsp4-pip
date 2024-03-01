@@ -1,0 +1,13 @@
+FROM jupyter/base-notebook:python-3.8
+RUN pip install jupyter-server-proxy==4.0.0
+
+ENV PATH=/mnt/cwd:$PATH
+RUN <<-EORUN
+set -x
+
+cat <<-EOF > $(which jupyterhub-singleuser)
+#!/bin/sh
+echo "jupyterhub-singleuser was called!"
+EOF
+
+EORUN

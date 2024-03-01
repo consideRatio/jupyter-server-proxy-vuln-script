@@ -1,3 +1,6 @@
+JupyterHub 3, released 2022-09-09
+
+
 # TODO
 
 - Clarify that the vulnerability is only websocket related.

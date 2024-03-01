@@ -1,0 +1,61 @@
+# This is a GitHub workflow defining a set of jobs with a set of steps.
+# ref: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
+#
+name: Test
+
+on:
+  pull_request:
+    paths-ignore:
+      - "**.md"
+      - ".github/workflows/*"
+      - "!.github/workflows/test.yaml"
+  push:
+    paths-ignore:
+      - "**.md"
+      - ".github/workflows/*"
+      - "!.github/workflows/test.yaml"
+    branches-ignore:
+      - "dependabot/**"
+      - "pre-commit-ci-update-config"
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: py${{ matrix.python-version }}-jsp${{ matrix.jsp-version }}-${{ matrix.jsp-installed-via }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - python-version: "3.7"
+            jsp-version: "3"
+            jsp-installed-via: pip
+          - python-version: "3.8"
+            jsp-version: "3"
+            jsp-installed-via: pip
+          - python-version: "3.8"
+            jsp-version: "4"
+            jsp-installed-via: pip
+          - python-version: "3.11"
+            jsp-version: "4"
+            jsp-installed-via: conda
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "${{ matrix.python-version }}"
+
+      - name: Set TAG environment variable
+        run:
+          TAG=py${{ matrix.python-version }}-jsp${{ matrix.jsp-version }}-${{ matrix.jsp-installed-via }}
+          echo "TAG=$TAG" >> $GITHUB_ENV
+          echo $TAG
+
+      - name: Build test image
+        run:
+          docker build . test-images/Dockerfile.$TAG
+
+      - name: Run test
+        run: |
+          docker run 
