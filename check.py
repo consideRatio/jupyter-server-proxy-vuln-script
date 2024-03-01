@@ -14,7 +14,6 @@ Read more at https://github.com/jupyterhub/jupyter-server-proxy/security/advisor
 """
 
 import os
-import shutil
 import subprocess
 import sys
 
@@ -38,8 +37,8 @@ def check_vuln():
 
 def get_version_specifier():
     """
-    Returns a pip/conda version specifier for use with `--no-deps` meant to do
-    as little as possible besides patching the vulnerability and remaining
+    Returns a pip version specifier for use with `--no-deps` meant to do as
+    little as possible besides patching the vulnerability and remaining
     functional.
     """
     old = ["jupyter-server-proxy>=3.2.3,<4"]
@@ -67,8 +66,7 @@ def get_version_specifier():
 def patch_vuln():
     """
     Attempts to patch the vulnerability by upgrading jupyter-server-proxy using
-    pip, or alternatively conda/mamba and the conda-forge channel if pip isn't
-    installed and conda/mamba is.
+    pip.
     """
     # attempt upgrade via pip, takes ~4 seconds
     proc = subprocess.run(
@@ -77,8 +75,6 @@ def patch_vuln():
         stderr=subprocess.DEVNULL,
     )
     pip_available = proc.returncode == 0
-    if os.environ.get("TEST_NO_PIP"):
-       pip_available = False 
     if pip_available:
         proc = subprocess.run(
             [sys.executable, "-m", "pip", "install", "--no-deps"]
@@ -86,27 +82,6 @@ def patch_vuln():
         )
         if proc.returncode == 0:
             return True
-
-    # attempt upgrade via mamba/conda, takes ~40 seconds
-    conda_executable = shutil.which("mamba") or shutil.which("conda")
-    if conda_executable:
-        conda_env = os.environ.copy()
-        conda_env["CONDA_AGGRESSIVE_UPDATE_PACKAGES"] = ""
-        proc = subprocess.run(
-            [
-                conda_executable,
-                "install",
-                "--yes",
-                "--no-deps",
-                "--channel=conda-forge",
-            ]
-            + get_version_specifier(),
-            env=conda_env,
-        )
-        if proc.returncode == 0:
-            return True
-
-    return False
 
 
 def main():
@@ -122,7 +97,7 @@ def main():
         
         if UPGRADE_IF_VULNERABLE:
             print(
-                "INFO: Attempting to upgrade jupyter-server-proxy using pip or mamba/conda...",
+                "INFO: Attempting to upgrade jupyter-server-proxy using pip...",
                 flush=True,
             )
             if patch_vuln():

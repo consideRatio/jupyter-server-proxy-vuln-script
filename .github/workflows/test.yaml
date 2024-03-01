@@ -30,35 +30,21 @@ jobs:
           - python-version: "3.7"
             jsp-version: "3"
             jsp-installed-via: pip
-            test-no-pip: ""
           - python-version: "3.8"
             jsp-version: "3"
             jsp-installed-via: pip
-            test-no-pip: ""
           - python-version: "3.8"
             jsp-version: "4"
             jsp-installed-via: pip
-            test-no-pip: ""
           - python-version: "3.11"
             jsp-version: "4"
             jsp-installed-via: pip
-            test-no-pip: ""
           - python-version: "3.9"
             jsp-version: "3"
             jsp-installed-via: conda
-            test-no-pip: ""
           - python-version: "3.11"
             jsp-version: "4"
             jsp-installed-via: conda
-            test-no-pip: ""
-          - python-version: "3.9"
-            jsp-version: "3"
-            jsp-installed-via: conda
-            test-no-pip: "-no-pip"
-          - python-version: "3.11"
-            jsp-version: "4"
-            jsp-installed-via: conda
-            test-no-pip: "-no-pip"
 
     steps:
       - uses: actions/checkout@v4
@@ -81,7 +67,7 @@ jobs:
       - name: Run test upgrade
         run: |
           start=`date +%s`
-          docker run -e TEST=1 -e TEST_NO_PIP=${{ matrix.test-no-pip }} -v $(pwd):/mnt/ghsa-w3vc-fx9p-wp4v $TAG /mnt/ghsa-w3vc-fx9p-wp4v/entrypoint jupyterhub-singleuser --ip=1.2.3.4 > output.txt || true
+          docker run -e TEST=1 -v $(pwd):/mnt/ghsa-w3vc-fx9p-wp4v $TAG /mnt/ghsa-w3vc-fx9p-wp4v/entrypoint jupyterhub-singleuser --ip=1.2.3.4 > output.txt || true
           end=`date +%s`
           runtime=$((end-start))
 
