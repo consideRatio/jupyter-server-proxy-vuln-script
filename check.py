@@ -90,6 +90,8 @@ def patch_vuln():
     # attempt upgrade via mamba/conda, takes ~40 seconds
     conda_executable = shutil.which("mamba") or shutil.which("conda")
     if conda_executable:
+        conda_env = os.environ.copy()
+        conda_env["CONDA_AGGRESSIVE_UPDATE_PACKAGES"] = ""
         proc = subprocess.run(
             [
                 conda_executable,
@@ -98,7 +100,8 @@ def patch_vuln():
                 "--no-deps",
                 "--channel=conda-forge",
             ]
-            + get_version_specifier()
+            + get_version_specifier(),
+            env=conda_env,
         )
         if proc.returncode == 0:
             return True
