@@ -1,12 +1,5 @@
 FROM jupyter/base-notebook:python-3.8
 RUN pip install jupyter-server-proxy==3.2.1
 
-ENV PATH=/mnt/cwd:$PATH
-RUN <<-EORUN
-    set -x
-
-    cat <<-EOF > $(which jupyterhub-singleuser)
-        #!/bin/sh
-        echo "jupyterhub-singleuser was called!"
-    EOF
-EORUN
+COPY mock-jupyterhub-singleuser /tmp/mock-jupyterhub-singleuser
+RUN /tmp/mock-jupyterhub-singleuser

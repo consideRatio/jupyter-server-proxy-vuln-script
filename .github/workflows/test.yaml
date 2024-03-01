@@ -21,7 +21,8 @@ on:
 
 jobs:
   test:
-    name: py${{ matrix.python-version }}-jsp${{ matrix.jsp-version }}-${{ matrix.jsp-installed-via }}
+    name: py${{ matrix.python-version }}-jsp${{ matrix.jsp-version }}_via_${{ matrix.jsp-installed-via }}${{ matrix.test-no-pip }}
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -29,33 +30,72 @@ jobs:
           - python-version: "3.7"
             jsp-version: "3"
             jsp-installed-via: pip
+            test-no-pip: ""
           - python-version: "3.8"
             jsp-version: "3"
             jsp-installed-via: pip
+            test-no-pip: ""
           - python-version: "3.8"
             jsp-version: "4"
             jsp-installed-via: pip
+            test-no-pip: ""
+          - python-version: "3.11"
+            jsp-version: "4"
+            jsp-installed-via: pip
+            test-no-pip: ""
+          - python-version: "3.9"
+            jsp-version: "3"
+            jsp-installed-via: conda
+            test-no-pip: ""
           - python-version: "3.11"
             jsp-version: "4"
             jsp-installed-via: conda
+            test-no-pip: ""
+          - python-version: "3.9"
+            jsp-version: "3"
+            jsp-installed-via: conda
+            test-no-pip: "-no-pip"
+          - python-version: "3.11"
+            jsp-version: "4"
+            jsp-installed-via: conda
+            test-no-pip: "-no-pip"
 
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "${{ matrix.python-version }}"
-
       - name: Set TAG environment variable
-        run:
+        run: |
           TAG=py${{ matrix.python-version }}-jsp${{ matrix.jsp-version }}-${{ matrix.jsp-installed-via }}
           echo "TAG=$TAG" >> $GITHUB_ENV
           echo $TAG
 
       - name: Build test image
-        run:
-          docker build . test-images/Dockerfile.$TAG
-
-      - name: Run test
         run: |
-          docker run 
+          cd test-images
+          docker build . -f Dockerfile.$TAG -t $TAG
+
+      - name: Verify test image
+        run: |
+          docker run $TAG bash -c 'cat $(which jupyterhub-singleuser)' | grep 'echo "jupyterhub-singleuser was called'
+
+      - name: Run test upgrade
+        run: |
+          start=`date +%s`
+          docker run -e TEST=1 -e TEST_NO_PIP=${{ matrix.test-no-pip }} -v $(pwd):/mnt/ghsa-w3vc-fx9p-wp4v $TAG /mnt/ghsa-w3vc-fx9p-wp4v/entrypoint jupyterhub-singleuser --ip=1.2.3.4 > output.txt || true
+          end=`date +%s`
+          runtime=$((end-start))
+
+          echo "Time to patch: $runtime seconds"
+
+          printf "\nStartup output:\n----------\n\n"
+          cat output.txt
+
+          printf "\n\nTests' detected output:\n----------\n\n"
+          cat output.txt | grep "__is vulnerable__"
+          cat output.txt | grep "jupyterhub-singleuser was called, and passed --ip=1.2.3.4"
+          if [[ "${{ matrix.jsp-version }}" == "3" ]]; then
+              JSP_VERSION=3.2.2
+          else
+              JSP_VERSION=4.1.0
+          fi
+          cat output.txt | grep -A100 "jupyterhub-singleuser was called" | grep $JSP_VERSION

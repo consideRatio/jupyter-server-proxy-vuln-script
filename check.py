@@ -4,8 +4,7 @@ This script is designed to check for and conditionally patch GHSA-w3vc-fx9p-wp4v
 in user servers started by a JupyterHub.
 
 Script assumptions:
-- its run before jupyter server
-- it starts "jupyterhub-singleuser" without additional arguments
+- its run before the jupyter server starts
 
 Script adjustments:
 - UPGRADE_IF_VULNERABLE
@@ -45,6 +44,11 @@ def get_version_specifier():
     """
     old = ["jupyter-server-proxy>=3.2.3,<4"]
     new = ["jupyter-server-proxy>=4.1.1,<5", "simpervisor>=1,<2"]
+    
+    # Until we have released 3.2.3 and 4.1.1, this helps us test things
+    if os.environ.get("TEST"):
+        old = ["jupyter-server-proxy>=3.2.2,<4"]
+        new = ["jupyter-server-proxy>=4.1.0,<5", "simpervisor>=1,<2"]
 
     try:
         if sys.version_info.minor < 8:
@@ -66,13 +70,15 @@ def patch_vuln():
     pip, or alternatively conda/mamba and the conda-forge channel if pip isn't
     installed and conda/mamba is.
     """
-    # attempt upgrade via pip
+    # attempt upgrade via pip, takes ~4 seconds
     proc = subprocess.run(
         [sys.executable, "-m", "pip", "--version"],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
     pip_available = proc.returncode == 0
+    if os.environ.get("TEST_NO_PIP"):
+       pip_available = False 
     if pip_available:
         proc = subprocess.run(
             [sys.executable, "-m", "pip", "install", "--no-deps"]
@@ -81,7 +87,7 @@ def patch_vuln():
         if proc.returncode == 0:
             return True
 
-    # attempt upgrade via mamba/conda
+    # attempt upgrade via mamba/conda, takes ~40 seconds
     conda_executable = shutil.which("mamba") or shutil.which("conda")
     if conda_executable:
         proc = subprocess.run(
@@ -129,12 +135,5 @@ def main():
                 )
                 if warning_or_error == "ERROR":
                     sys.exit(1)
-
-    jhs_path = shutil.which("jupyterhub-singleuser")
-    if not jhs_path:
-        print("ERROR: jupyterhub-singleuser not found on path", flush=True)
-        sys.exit(1)
-    os.execv(sys.executable, [sys.executable, jhs_path])
-
 
 main()

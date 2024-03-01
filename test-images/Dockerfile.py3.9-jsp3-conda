@@ -2,12 +2,5 @@ FROM pangeo/base-notebook:2022.09.06
 # python 3.9
 # jsp 3.2.1
 
-ENV PATH=/mnt/cwd:$PATH
-RUN <<-EORUN
-    set -x
-
-    cat <<-EOF > $(which jupyterhub-singleuser)
-        #!/bin/sh
-        echo "jupyterhub-singleuser was called!"
-    EOF
-EORUN
+COPY mock-jupyterhub-singleuser /tmp/mock-jupyterhub-singleuser
+RUN /tmp/mock-jupyterhub-singleuser

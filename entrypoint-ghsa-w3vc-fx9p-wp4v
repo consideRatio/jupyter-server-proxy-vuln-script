@@ -1,6 +1,0 @@
-#!/bin/sh
-echo "jupyterhub-singleuser was hijacked!"
-echo $PATH
-
-export PATH=${PATH##/mnt/cwd:}
-jupyterhub-singleuser

@@ -1,0 +1,5 @@
+#!/bin/sh
+set -e
+
+python3 /mnt/ghsa-w3vc-fx9p-wp4v/check.py
+exec "$@"

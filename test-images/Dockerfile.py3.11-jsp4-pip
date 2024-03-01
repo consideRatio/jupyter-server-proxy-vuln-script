@@ -1,6 +1,5 @@
-FROM pangeo/base-notebook:2023.09.19
-# python 3.11
-# jsp 4.0.0
+FROM jupyter/base-notebook:python-3.11
+RUN pip install jupyter-server-proxy==4.0.0
 
 COPY mock-jupyterhub-singleuser /tmp/mock-jupyterhub-singleuser
 RUN /tmp/mock-jupyterhub-singleuser
