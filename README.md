@@ -21,6 +21,8 @@ Jupyter server.
 
 ### For JupyterHub admins of [TLJH] installations
 
+<details><summary>Expand to read more</summary>
+
 To secure a tljh deployment's user servers, first check if
 `jupyter-server-proxy` is installed in the user environment with a vulnerable
 version. If it is, patch the vulnerability and consider terminating currently
@@ -84,7 +86,11 @@ User servers that started before the patch was applied are still vulnerable. To
 ensure they aren't vulnerable any more you could forcefully terminate their
 servers via the JupyterHub web interface at `https://<your domain>/hub/admin`.
 
+</details>
+
 ### For JupyterHub admins of [Z2JH] installations
+
+<details><summary>Expand to read more</summary>
 
 To secure your z2jh deployment's user servers, first consider if one or more
 user environments is or may be vulnerable, then ensure new user servers' aren't
@@ -293,7 +299,11 @@ User servers that started before the patch was applied are still vulnerable. To
 ensure they aren't vulnerable any more you could forcefully terminate their
 servers via the JupyterHub web interface at `https://<your domain>/hub/admin`.
 
+</details>
+
 ## Reproduction
+
+<details><summary>Expand to read more</summary>
 
 ### Setup application to proxy
 
@@ -358,3 +368,5 @@ websocat ws://localhost:8888/proxy/9500/ws
 
 At the terminal, type 'Just testing' and press Enter. You'll get `You said: Just
 testing` without any authentication required.
+
+</details>
