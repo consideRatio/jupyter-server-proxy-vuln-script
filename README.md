@@ -1,32 +1,22 @@
 ## Summary
 
-`jupyter-server-proxy` is used to expose ports local to a Jupyter server
-listening to web traffic to the Jupyter server's _authenticated users_ by
-proxying via web requests and/or websockets. The vulnerability is that
-`jupyter-server-proxy` has failed to check if the user is authenticated when
-proxying websockets.
+`jupyter-server-proxy` is used to expose ports local to a Jupyter server listening to web traffic to the Jupyter server's _authenticated users_ by proxying via web requests and/or websockets. The vulnerability is that `jupyter-server-proxy` has failed to check if the user is authenticated when proxying websockets.
 
 ## Impact
 
-This vulnerability can lead to remote code execution, for if for example a VNC
-server is running and accepting websockets next to the Jupyter server, like
-enabled by [`jupyter-remote-desktop-proxy`].
+This vulnerability can lead to remote code execution, for if for example a VNC server is running and accepting websockets next to the Jupyter server, like enabled by [`jupyter-remote-desktop-proxy`].
 
 [`jupyter-remote-desktop-proxy`]: https://github.com/jupyterhub/jupyter-remote-desktop-proxy
 
 ## Remediation
 
-Upgrade `jupyter-server-proxy` to a patched version and restart any running
-Jupyter server.
+Upgrade `jupyter-server-proxy` to a patched version and restart any running Jupyter server.
 
 ### For JupyterHub admins of [TLJH] installations
 
 <details><summary>Expand to read more</summary>
 
-To secure a tljh deployment's user servers, first check if
-`jupyter-server-proxy` is installed in the user environment with a vulnerable
-version. If it is, patch the vulnerability and consider terminating currently
-running user servers.
+To secure a tljh deployment's user servers, first check if `jupyter-server-proxy` is installed in the user environment with a vulnerable version. If it is, patch the vulnerability and consider terminating currently running user servers.
 
 [tljh]: https://tljh.jupyter.org
 
@@ -80,9 +70,7 @@ sudo PATH=/opt/tljh/user/bin:${PATH} pip install "jupyter-server-proxy>=3.2.3,!=
 
 #### 3. Consider terminating currently running user servers
 
-User servers that started before the patch was applied are still vulnerable. To
-ensure they aren't vulnerable any more you could forcefully terminate their
-servers via the JupyterHub web interface at `https://<your domain>/hub/admin`.
+User servers that started before the patch was applied are still vulnerable. To ensure they aren't vulnerable any more you could forcefully terminate their servers via the JupyterHub web interface at `https://<your domain>/hub/admin`.
 
 </details>
 
@@ -90,18 +78,13 @@ servers via the JupyterHub web interface at `https://<your domain>/hub/admin`.
 
 <details><summary>Expand to read more</summary>
 
-To secure your z2jh deployment's user servers, first consider if one or more
-user environments is or may be vulnerable, then ensure new user servers' aren't
-started with the vulnerability, and finally consider terminating currently
-running user servers.
+To secure your z2jh deployment's user servers, first consider if one or more user environments is or may be vulnerable, then ensure new user servers' aren't started with the vulnerability, and finally consider terminating currently running user servers.
 
 [z2jh]: https://z2jh.jupyter.org
 
 #### 1. Check for vulnerabilities
 
-Consider all docker images that user servers' environment may be based on. If
-your deployment expose a fixed set of images, you may be able to update them to
-non-vulnerable versions.
+Consider all docker images that user servers' environment may be based on. If your deployment expose a fixed set of images, you may be able to update them to non-vulnerable versions.
 
 To check if an individual docker image is vulnerable, use a command like:
 
@@ -120,10 +103,7 @@ else:
 '
 ```
 
-Note that if you reference an image with a mutable tag, such as
-`quay.io/jupyter/pangeo-notebook:master`, you should ensure a new version is
-used by configuring the image pull policy so that an older vulnerable version
-isn't kept being used because it was already available on a Kubernetes node.
+Note that if you reference an image with a mutable tag, such as `quay.io/jupyter/pangeo-notebook:master`, you should ensure a new version is used by configuring the image pull policy so that an older vulnerable version isn't kept being used because it was already available on a Kubernetes node.
 
 ```yaml
 singleuser:
@@ -137,19 +117,11 @@ singleuser:
 
 #### 2. Patch vulnerabilities dynamically
 
-If your z2jh deployment still may start vulnerable images for users, you could
-mount a script that checks and patches the vulnerability before the jupyter
-server starts.
+If your z2jh deployment still may start vulnerable images for users, you could mount a script that checks and patches the vulnerability before the jupyter server starts.
 
-Below is JupyterHub Helm chart configuration that relies on
-[`singleuser.extraFiles`] and [`singleuser.cmd`] to mount a script we use as an
-entrypoint to dynamically check and patch the vulnerability before jupyter
-server is started.
+Below is JupyterHub Helm chart configuration that relies on [`singleuser.extraFiles`] and [`singleuser.cmd`] to mount a script we use as an entrypoint to dynamically check and patch the vulnerability before jupyter server is started.
 
-Unless you change it, the script will attempt to upgrade `jupyter-server-proxy`
-to a non-vulnerable version if needed, and error if it needs to and fails. You
-can adjust this behavior by adjusting the constants `UPGRADE_IF_VULNERABLE` and
-`ERROR_IF_VULNERABLE` inside the script.
+Unless you change it, the script will attempt to upgrade `jupyter-server-proxy` to a non-vulnerable version if needed, and error if it needs to and fails. You can adjust this behavior by adjusting the constants `UPGRADE_IF_VULNERABLE` and `ERROR_IF_VULNERABLE` inside the script.
 
 [`singleuser.extraFiles`]: https://z2jh.jupyter.org/en/stable/resources/reference.html#singleuser-extrafiles
 [`singleuser.cmd`]: https://z2jh.jupyter.org/en/stable/resources/reference.html#singleuser-cmd
@@ -293,9 +265,7 @@ singleuser:
 
 #### 3. Consider terminating currently running user servers
 
-User servers that started before the patch was applied are still vulnerable. To
-ensure they aren't vulnerable any more you could forcefully terminate their
-servers via the JupyterHub web interface at `https://<your domain>/hub/admin`.
+User servers that started before the patch was applied are still vulnerable. To ensure they aren't vulnerable any more you could forcefully terminate their servers via the JupyterHub web interface at `https://<your domain>/hub/admin`.
 
 </details>
 
@@ -357,14 +327,12 @@ This is secure as intended.
 
 ### Verify websocket requests doesn't authentication
 
-The example makes use of [websocat](https://github.com/vi/websocat) to test
-websockets. You can use any other tool you are familiar with too.
+The example makes use of [websocat](https://github.com/vi/websocat) to test websockets. You can use any other tool you are familiar with too.
 
 ```bash
 websocat ws://localhost:8888/proxy/9500/ws
 ```
 
-At the terminal, type 'Just testing' and press Enter. You'll get `You said: Just
-testing` without any authentication required.
+At the terminal, type 'Just testing' and press Enter. You'll get `You said: Just testing` without any authentication required.
 
 </details>
