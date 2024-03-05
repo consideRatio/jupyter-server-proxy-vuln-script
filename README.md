@@ -51,8 +51,7 @@ else:
 Alternatively as a root user on the server where tljh is installed, you can do:
 
 ```bash
-export PATH=/opt/tljh/user/bin:${PATH}
-sudo PATH=${PATH} python3 -c '
+sudo PATH=/opt/tljh/user/bin:${PATH} python3 -c '
 try:
     import jupyter_server_proxy
     is_vulnerable = not hasattr(jupyter_server_proxy, "__version__")
@@ -76,8 +75,7 @@ sudo -E pip install "jupyter-server-proxy>=3.2.3,!=4.0.0,!=4.1.0"
 Alternatively as a root user on the server where tljh is installed, you can do:
 
 ```bash
-export PATH=/opt/tljh/user/bin:${PATH}
-sudo PATH=${PATH} pip install "jupyter-server-proxy>=3.2.3,!=4.0.0,!=4.1.0"
+sudo PATH=/opt/tljh/user/bin:${PATH} pip install "jupyter-server-proxy>=3.2.3,!=4.0.0,!=4.1.0"
 ```
 
 #### 3. Consider terminating currently running user servers
