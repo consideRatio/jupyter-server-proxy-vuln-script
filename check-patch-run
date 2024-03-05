@@ -6,7 +6,8 @@ passed via arguments if provided, allowing it to wrap a user server startup call
 to `jupyterhub-singleuser` for example.
 
 Script assumptions:
-- its run before the jupyter server starts
+- it is run before the jupyter server starts
+- pip is available and it has permissions to upgrade packages
 
 Script adjustments:
 - UPGRADE_IF_VULNERABLE
