@@ -67,7 +67,7 @@ jobs:
       - name: Run test upgrade
         run: |
           start=`date +%s`
-          docker run -e TEST=1 -v $(pwd):/mnt/ghsa-w3vc-fx9p-wp4v $TAG /mnt/ghsa-w3vc-fx9p-wp4v/entrypoint jupyterhub-singleuser --ip=1.2.3.4 > output.txt || true
+          docker run -e TEST=1 -v $(pwd):/mnt/ghsa-w3vc-fx9p-wp4v $TAG /mnt/ghsa-w3vc-fx9p-wp4v/check-patch-run jupyterhub-singleuser --ip=1.2.3.4 > output.txt || true
           end=`date +%s`
           runtime=$((end-start))
 

@@ -1,2 +1,0 @@
-#!/bin/sh
-echo "jupyterhub-singleuser was called, and passed "

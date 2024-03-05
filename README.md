@@ -52,16 +52,12 @@ that upgrades `jupyter-server-proxy` if needed before transitioning to starting
 ```yaml
 singleuser:
   cmd:
-    - /mnt/ghsa-w3vc-fx9p-wp4v/entrypoint
+    - /mnt/ghsa-w3vc-fx9p-wp4v/check-patch-run
     - jupyterhub-singleuser
   extraFiles:
-    ghsa-w3vc-fx9p-wp4v-entrypoint:
-      mountPath: /mnt/ghsa-w3vc-fx9p-wp4v/entrypoint
+    ghsa-w3vc-fx9p-wp4v-check-patch-run:
+      mountPath: /mnt/ghsa-w3vc-fx9p-wp4v/check-patch-run
       mode: 0755
       stringData: |
-        <copied from entrypoint>
-    ghsa-w3vc-fx9p-wp4v-check:
-      mountPath: /mnt/ghsa-w3vc-fx9p-wp4v/check.py
-      stringData: |
-        <copied from check.py>
+        <copied from check-patch-run>
 ```
