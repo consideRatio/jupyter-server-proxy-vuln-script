@@ -44,7 +44,13 @@ jobs:
             jsp-installed-via: conda
           - python-version: "3.11"
             jsp-version: "4"
-            jsp-installed-via: conda
+            jsp-installed-via: conda-datascience
+          - python-version: "3.11"
+            jsp-version: "4"
+            jsp-installed-via: conda-julia
+          - python-version: "3.11"
+            jsp-version: "4"
+            jsp-installed-via: conda-pangeo
 
     steps:
       - uses: actions/checkout@v4

@@ -1,0 +1,6 @@
+FROM jupyter/julia-notebook:2023-09-18
+# python 3.11
+# jsp 4.0.0
+
+COPY mock-jupyterhub-singleuser /tmp/mock-jupyterhub-singleuser
+RUN /tmp/mock-jupyterhub-singleuser
