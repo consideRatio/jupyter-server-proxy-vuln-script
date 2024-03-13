@@ -28,8 +28,8 @@ ERROR_IF_VULNERABLE = True
 
 def check_vuln():
     """
-    Checks for the vulnerability by looking to see if __version__ is available,
-    it is since 3.2.3 and 4.1.1 that and those are the first patched versions.
+    Checks for the vulnerability by looking to see if __version__ is available
+    as it coincides with the patched versions (3.2.3 and 4.1.1).
     """
     try:
         import jupyter_server_proxy
