@@ -73,7 +73,7 @@ jobs:
       - name: Run test upgrade
         run: |
           start=`date +%s`
-          docker run -e TEST=1 -v $(pwd):/mnt/ghsa-w3vc-fx9p-wp4v $TAG /mnt/ghsa-w3vc-fx9p-wp4v/check-patch-run jupyterhub-singleuser --ip=1.2.3.4 > output.txt || true
+          docker run -v $(pwd):/mnt/ghsa-w3vc-fx9p-wp4v $TAG /mnt/ghsa-w3vc-fx9p-wp4v/check-patch-run jupyterhub-singleuser --ip=1.2.3.4 > output.txt || true
           end=`date +%s`
           runtime=$((end-start))
 
@@ -86,8 +86,8 @@ jobs:
           cat output.txt | grep "__is vulnerable__"
           cat output.txt | grep "jupyterhub-singleuser was called, and passed --ip=1.2.3.4"
           if [[ "${{ matrix.jsp-version }}" == "3" ]]; then
-              JSP_VERSION=3.2.2
+              JSP_VERSION=3.2.3
           else
-              JSP_VERSION=4.1.0
+              JSP_VERSION=4.1.1
           fi
           cat output.txt | grep -A100 "jupyterhub-singleuser was called" | grep $JSP_VERSION

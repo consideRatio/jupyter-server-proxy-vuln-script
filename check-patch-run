@@ -48,11 +48,6 @@ def get_version_specifier():
     old = ["jupyter-server-proxy>=3.2.3,<4"]
     new = ["jupyter-server-proxy>=4.1.1,<5", "simpervisor>=1,<2"]
 
-    # Until we have released 3.2.3 and 4.1.1, this helps us test things
-    if os.environ.get("TEST"):
-        old = ["jupyter-server-proxy>=3.2.2,<4"]
-        new = ["jupyter-server-proxy>=4.1.0,<5", "simpervisor>=1,<2"]
-
     try:
         if sys.version_info < (3, 8):
             return old
