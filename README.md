@@ -203,7 +203,7 @@ singleuser:
         def patch_vuln():
             """
             Attempts to patch the vulnerability by upgrading jupyter-server-proxy using
-            pip.
+            pip. Returns True if the patch is applied successfully, otherwise False.
             """
             # attempt upgrade via pip, takes ~4 seconds
             proc = subprocess.run(
@@ -219,6 +219,7 @@ singleuser:
                 )
                 if proc.returncode == 0:
                     return True
+            return False
 
 
         def main():
